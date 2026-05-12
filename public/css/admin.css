@@ -755,6 +755,22 @@ textarea.code:focus {
 .tpl-mock--landing .tpl-mock__feature-row span { background: #1d1f29; }
 .tpl-mock--landing .tpl-mock__sticky { background: var(--brand-peach); color: var(--brand-green); }
 
+.tpl-mock--empty {
+  background: #ffffff;
+  border-color: var(--border);
+  color: var(--text-muted);
+  display: flex; flex-direction: column; justify-content: center; gap: 14px;
+  padding: 28px 18px;
+}
+.tpl-mock--empty .tpl-mock__slot { width: 70%; margin: 0 auto; }
+.tpl-mock__empty-note {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #b7af9e;
+}
+
 .tpl-mock--magazine { background: #fbf9f4; border-color: #e8e3d6; color: #6b6650; }
 .tpl-mock--magazine .tpl-mock__bar { background: #d8cfb2; }
 .tpl-mock--magazine .tpl-mock__line { background: #d8cfb2; }

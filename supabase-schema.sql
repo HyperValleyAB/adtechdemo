@@ -11,7 +11,7 @@ create table if not exists public.demos (
   client_name         text not null default '',
   description         text not null default '',
   status              text not null default 'draft'   check (status   in ('draft','published')),
-  template            text not null default 'news'    check (template in ('news','magazine','landing')),
+  template            text not null default 'news'    check (template in ('news','magazine','landing','empty')),
   custom_css          text not null default '',
   head_html           text not null default '',
   header_ad_html      text not null default '',

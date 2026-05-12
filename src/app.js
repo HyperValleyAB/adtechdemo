@@ -114,7 +114,7 @@ function createApp() {
 
   app.get('/admin/templates', auth.requireAuth, asyncHandler(async (req, res) => {
     const demos = await storage.listDemos();
-    const counts = { news: 0, magazine: 0, landing: 0 };
+    const counts = { news: 0, magazine: 0, landing: 0, empty: 0 };
     for (const d of demos) counts[d.template] = (counts[d.template] || 0) + 1;
     res.type('html').send(
       renderView('admin-templates.html', {
@@ -122,6 +122,7 @@ function createApp() {
         newsCount: String(counts.news || 0),
         magazineCount: String(counts.magazine || 0),
         landingCount: String(counts.landing || 0),
+        emptyCount: String(counts.empty || 0),
       }),
     );
   }));
@@ -398,6 +399,7 @@ function renderTemplateOptions(selected) {
     { value: 'news', label: 'News article' },
     { value: 'magazine', label: 'Magazine / lifestyle' },
     { value: 'landing', label: 'Minimal landing page' },
+    { value: 'empty', label: 'Empty (blank canvas)' },
   ];
   return items
     .map((i) => `<option value="${i.value}"${i.value === selected ? ' selected' : ''}>${i.label}</option>`)
@@ -430,9 +432,10 @@ async function renderSettingsPage(req, res, { flash = '' } = {}) {
 function templateLabel(t) {
   switch (t) {
     case 'magazine': return 'Magazine';
-    case 'landing': return 'Landing';
+    case 'landing':  return 'Landing';
+    case 'empty':    return 'Empty';
     case 'news':
-    default: return 'News';
+    default:         return 'News';
   }
 }
 

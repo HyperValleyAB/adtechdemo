@@ -4,7 +4,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const { slugify } = require('./utils');
 
-const TEMPLATES = ['news', 'magazine', 'landing'];
+const TEMPLATES = ['news', 'magazine', 'landing', 'empty'];
 const STATUSES  = ['draft', 'published'];
 
 const SCRIPT_FIELDS = [

@@ -4,7 +4,7 @@ const { uuid, slugify } = require('./utils');
 
 const DATA_FILE = path.join(__dirname, '..', 'data', 'demos.json');
 
-const TEMPLATES = ['news', 'magazine', 'landing'];
+const TEMPLATES = ['news', 'magazine', 'landing', 'empty'];
 const STATUSES = ['draft', 'published'];
 
 const SCRIPT_FIELDS = [

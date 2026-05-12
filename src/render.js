@@ -28,14 +28,24 @@ function lookup(obj, dotted) {
   return dotted.split('.').reduce((acc, k) => (acc == null ? acc : acc[k]), obj);
 }
 
-function renderAdSlot(html, label, { ctaClass = '' } = {}) {
-  if (html && String(html).trim()) {
-    return `<div class="ad-slot ${ctaClass}" data-slot="${escapeHtml(label)}">${html}</div>`;
+function renderAdSlot(html, label, { ctaClass = '', stripWhenEmpty = false, noWrapper = false } = {}) {
+  const filled = html && String(html).trim();
+  if (!filled) {
+    if (stripWhenEmpty) return '';
+    return `<div class="ad-slot ad-slot--empty ${ctaClass}" data-slot="${escapeHtml(label)}"><span class="ad-slot__hint">Ad placement · ${escapeHtml(label)}</span></div>`;
   }
-  return `<div class="ad-slot ad-slot--empty ${ctaClass}" data-slot="${escapeHtml(label)}"><span class="ad-slot__hint">Ad placement · ${escapeHtml(label)}</span></div>`;
+  if (noWrapper) return html;
+  return `<div class="ad-slot ${ctaClass}" data-slot="${escapeHtml(label)}">${html}</div>`;
 }
 
 function buildArticleBody(demo) {
+  // Empty template: just emit the two in-article ads (if any), no copy, no wrappers.
+  if (demo.template === 'empty') {
+    return (
+      renderAdSlot(demo.inArticleAdHtml, 'In-article', { stripWhenEmpty: true, noWrapper: true }) +
+      renderAdSlot(demo.midArticleAdHtml, 'Mid-article', { stripWhenEmpty: true, noWrapper: true })
+    );
+  }
   // Split intrinsic article copy around the mid-article ad slot.
   const intro = demo.template === 'landing'
     ? landingIntro(demo)
@@ -94,14 +104,29 @@ function landingIntro(demo) {
 function templateFile(template) {
   switch (template) {
     case 'magazine': return 'template-magazine.html';
-    case 'landing': return 'template-landing.html';
+    case 'landing':  return 'template-landing.html';
+    case 'empty':    return 'template-empty.html';
     case 'news':
-    default: return 'template-news.html';
+    default:         return 'template-news.html';
   }
+}
+
+function renderStickyAd(html, { stripWhenEmpty = false, noWrapper = false } = {}) {
+  const filled = html && String(html).trim();
+  if (!filled) {
+    if (stripWhenEmpty) return '';
+    return `<div class="sticky-ad sticky-ad--empty" data-slot="Sticky"><span class="ad-slot__hint">Ad placement · Sticky bottom</span><button type="button" class="sticky-ad__close" aria-label="Close">×</button></div>`;
+  }
+  if (noWrapper) return html;
+  return `<div class="sticky-ad" data-slot="Sticky">${html}</div>`;
 }
 
 function renderDemoPage(demo, { isPreview = false } = {}) {
   const tpl = loadView(templateFile(demo.template));
+  const isEmpty = demo.template === 'empty';
+  // On the empty template: drop the dashed "Ad placement" placeholders and the
+  // .ad-slot wrappers, so the page is truly blank apart from the pasted scripts.
+  const slotOpts = { stripWhenEmpty: isEmpty, noWrapper: isEmpty };
   const data = {
     title: demo.title || 'Untitled demo',
     clientName: demo.clientName || '',
@@ -111,13 +136,11 @@ function renderDemoPage(demo, { isPreview = false } = {}) {
     customCss: demo.customCss || '',
     headHtml: demo.headHtml || '',
     bodyEndHtml: demo.bodyEndHtml || '',
-    headerAd: renderAdSlot(demo.headerAdHtml, 'Header'),
-    topAd: renderAdSlot(demo.topAdHtml, 'Top banner'),
-    sidebarAd: renderAdSlot(demo.sidebarAdHtml, 'Sidebar'),
-    stickyAd: demo.stickyAdHtml && String(demo.stickyAdHtml).trim()
-      ? `<div class="sticky-ad" data-slot="Sticky">${demo.stickyAdHtml}</div>`
-      : `<div class="sticky-ad sticky-ad--empty" data-slot="Sticky"><span class="ad-slot__hint">Ad placement · Sticky bottom</span><button type="button" class="sticky-ad__close" aria-label="Close">×</button></div>`,
-    footerAd: renderAdSlot(demo.footerAdHtml, 'Footer'),
+    headerAd: renderAdSlot(demo.headerAdHtml, 'Header', slotOpts),
+    topAd: renderAdSlot(demo.topAdHtml, 'Top banner', slotOpts),
+    sidebarAd: renderAdSlot(demo.sidebarAdHtml, 'Sidebar', slotOpts),
+    stickyAd: renderStickyAd(demo.stickyAdHtml, slotOpts),
+    footerAd: renderAdSlot(demo.footerAdHtml, 'Footer', slotOpts),
     articleBody: buildArticleBody(demo),
     previewBadge: isPreview ? '<div class="preview-badge">Preview · not published</div>' : '',
   };

@@ -175,6 +175,30 @@
           <a class="btn-ghost" href="/admin/templates/preview/landing" target="_blank" rel="noopener">Preview empty</a>
         </div>
       </article>
+
+      <article class="tpl-card">
+        <div class="tpl-card__head">
+          <div>
+            <span class="badge badge--muted">Empty</span>
+            <h2>Empty (blank canvas)</h2>
+            <p>A naked white page with no template chrome, no CSS. Only the ad scripts you paste appear. For isolated creative tests.</p>
+          </div>
+          <span class="tpl-card__count">{{emptyCount}} in use</span>
+        </div>
+        <div class="tpl-mock tpl-mock--empty" aria-hidden="true">
+          <div class="tpl-mock__slot tpl-mock__slot--top">Your ad here</div>
+          <div class="tpl-mock__empty-note">No layout · no styling · just your scripts</div>
+          <div class="tpl-mock__slot">Your ad here</div>
+        </div>
+        <ul class="tpl-card__slots">
+          <li>All 8 placements available, but rendered raw</li>
+          <li>No CSS, no copy, no wrappers · ideal for isolated A/B tests</li>
+        </ul>
+        <div class="tpl-card__actions">
+          <a class="btn-primary" href="/admin/new?template=empty">Create with Empty</a>
+          <a class="btn-ghost" href="/admin/templates/preview/empty" target="_blank" rel="noopener">Preview empty</a>
+        </div>
+      </article>
     </section>
   </main>
 

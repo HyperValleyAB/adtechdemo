@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{title}}</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+/* Bare minimum — only what's needed for the preview badge to be visible.
+   No template chrome. The page is intentionally blank so admins can test
+   raw ad scripts in isolation. */
+body { margin: 0; padding: 0; background: #ffffff; }
+.preview-badge {
+  position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+  background: #032b16; color: #f4d4be;
+  font: 600 11px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 7px 14px; border-radius: 999px; z-index: 9999;
+  box-shadow: 0 6px 20px rgba(3, 43, 22, 0.25);
+}
+{{{customCss}}}
+</style>
+{{{headHtml}}}
+</head>
+<body data-template="empty">
+{{{previewBadge}}}
+{{{headerAd}}}
+{{{topAd}}}
+{{{articleBody}}}
+{{{sidebarAd}}}
+{{{footerAd}}}
+{{{stickyAd}}}
+{{{bodyEndHtml}}}
+</body>
+</html>

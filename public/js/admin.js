@@ -1,4 +1,18 @@
 (function () {
+  // Password reveal toggle. <button class="password-toggle" aria-controls="…">
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.password-toggle');
+    if (!btn) return;
+    e.preventDefault();
+    const id = btn.getAttribute('aria-controls');
+    const input = id && document.getElementById(id);
+    if (!input) return;
+    const showing = input.type === 'text';
+    input.type = showing ? 'password' : 'text';
+    btn.setAttribute('aria-pressed', String(!showing));
+    btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+  });
+
   // Confirm-before-submit for any form with data-confirm.
   document.addEventListener('submit', function (e) {
     const form = e.target;

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Templates · Adtech Demo</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/public/img/favicon.svg">
+<link rel="stylesheet" href="/public/css/admin.css">
+</head>
+<body class="admin-shell">
+  <aside class="sidebar">
+    <a class="sidebar__brand" href="/admin">
+      <img class="sidebar__brand-logo" src="/public/img/logo.svg" alt="Leeads Adprofit">
+      <span class="sidebar__brand-sub">Adtech Demo</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a class="sidebar__link" href="/admin">All demos</a>
+      <a class="sidebar__link" href="/admin/new">Create demo</a>
+      <a class="sidebar__link sidebar__link--active" href="/admin/templates">Templates</a>
+      <a class="sidebar__link" href="/admin/settings">Settings</a>
+    </nav>
+    <form class="sidebar__logout" method="post" action="/logout">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <button type="submit" class="btn-ghost btn-block">Sign out</button>
+    </form>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div class="topbar__crumbs">
+        <a href="/admin">All demos</a>
+        <span class="topbar__sep">/</span>
+        <span>Templates</span>
+      </div>
+    </header>
+
+    <section class="page-head">
+      <div>
+        <div class="page-eyebrow">Library</div>
+        <h1>Templates</h1>
+        <p class="page-sub">Three publisher-style layouts. Pick one when creating a demo, or preview an empty version to see the ad-slot map.</p>
+      </div>
+    </section>
+
+    <section class="tpl-grid">
+      <article class="tpl-card">
+        <div class="tpl-card__head">
+          <div>
+            <span class="badge badge--info">News</span>
+            <h2>News article</h2>
+            <p>Inspired by Breakit, DI Digital and The Verge. Editorial flow with a sticky sidebar and bottom takeover.</p>
+          </div>
+          <span class="tpl-card__count">{{newsCount}} in use</span>
+        </div>
+        <div class="tpl-mock tpl-mock--news" aria-hidden="true">
+          <div class="tpl-mock__bar tpl-mock__bar--header"></div>
+          <div class="tpl-mock__slot tpl-mock__slot--top">Top banner</div>
+          <div class="tpl-mock__body">
+            <div class="tpl-mock__article">
+              <div class="tpl-mock__line tpl-mock__line--xl"></div>
+              <div class="tpl-mock__line tpl-mock__line--lg"></div>
+              <div class="tpl-mock__hero"></div>
+              <div class="tpl-mock__line"></div>
+              <div class="tpl-mock__line"></div>
+              <div class="tpl-mock__slot">In-article</div>
+              <div class="tpl-mock__line"></div>
+              <div class="tpl-mock__line"></div>
+              <div class="tpl-mock__slot">Mid-article</div>
+              <div class="tpl-mock__line"></div>
+            </div>
+            <aside class="tpl-mock__sidebar">
+              <div class="tpl-mock__slot tpl-mock__slot--tall">Sidebar</div>
+              <div class="tpl-mock__card"></div>
+            </aside>
+          </div>
+          <div class="tpl-mock__slot tpl-mock__slot--footer">Footer ad</div>
+          <div class="tpl-mock__sticky">Sticky bottom</div>
+        </div>
+        <ul class="tpl-card__slots">
+          <li>Header · Top banner · In-article · Mid-article</li>
+          <li>Sidebar · Sticky bottom · Footer · Head/body scripts</li>
+        </ul>
+        <div class="tpl-card__actions">
+          <a class="btn-primary" href="/admin/new?template=news">Create with News</a>
+          <a class="btn-ghost" href="/admin/templates/preview/news" target="_blank" rel="noopener">Preview empty</a>
+        </div>
+      </article>
+
+      <article class="tpl-card">
+        <div class="tpl-card__head">
+          <div>
+            <span class="badge badge--warning">Magazine</span>
+            <h2>Magazine / lifestyle</h2>
+            <p>Editorial style with a serif headline, a soft palette and large hero — built for native ad placements.</p>
+          </div>
+          <span class="tpl-card__count">{{magazineCount}} in use</span>
+        </div>
+        <div class="tpl-mock tpl-mock--magazine" aria-hidden="true">
+          <div class="tpl-mock__bar tpl-mock__bar--header"></div>
+          <div class="tpl-mock__magazine-hero">
+            <div class="tpl-mock__hero tpl-mock__hero--tall"></div>
+            <div class="tpl-mock__magazine-copy">
+              <div class="tpl-mock__line tpl-mock__line--xl"></div>
+              <div class="tpl-mock__line tpl-mock__line--lg"></div>
+              <div class="tpl-mock__line"></div>
+            </div>
+          </div>
+          <div class="tpl-mock__slot tpl-mock__slot--top">Top banner</div>
+          <div class="tpl-mock__body">
+            <div class="tpl-mock__article">
+              <div class="tpl-mock__line"></div>
+              <div class="tpl-mock__slot">In-article (native)</div>
+              <div class="tpl-mock__line"></div>
+              <div class="tpl-mock__hero tpl-mock__hero--medium"></div>
+              <div class="tpl-mock__line"></div>
+              <div class="tpl-mock__slot">Mid-article</div>
+              <div class="tpl-mock__line"></div>
+            </div>
+            <aside class="tpl-mock__sidebar">
+              <div class="tpl-mock__slot tpl-mock__slot--tall">Sidebar</div>
+            </aside>
+          </div>
+          <div class="tpl-mock__slot tpl-mock__slot--footer">Footer ad</div>
+        </div>
+        <ul class="tpl-card__slots">
+          <li>Large hero · Native in-article placements</li>
+          <li>Sidebar · Footer · Sticky · Head/body scripts</li>
+        </ul>
+        <div class="tpl-card__actions">
+          <a class="btn-primary" href="/admin/new?template=magazine">Create with Magazine</a>
+          <a class="btn-ghost" href="/admin/templates/preview/magazine" target="_blank" rel="noopener">Preview empty</a>
+        </div>
+      </article>
+
+      <article class="tpl-card">
+        <div class="tpl-card__head">
+          <div>
+            <span class="badge badge--success">Landing</span>
+            <h2>Minimal landing page</h2>
+            <p>Dark, hero-driven SaaS-style page. Built for campaign microsites and rich-media takeovers.</p>
+          </div>
+          <span class="tpl-card__count">{{landingCount}} in use</span>
+        </div>
+        <div class="tpl-mock tpl-mock--landing" aria-hidden="true">
+          <div class="tpl-mock__bar tpl-mock__bar--header tpl-mock__bar--dark"></div>
+          <div class="tpl-mock__landing-hero">
+            <div class="tpl-mock__line tpl-mock__line--xl"></div>
+            <div class="tpl-mock__line tpl-mock__line--lg"></div>
+            <div class="tpl-mock__cta-row">
+              <span class="tpl-mock__cta"></span>
+              <span class="tpl-mock__cta tpl-mock__cta--ghost"></span>
+            </div>
+          </div>
+          <div class="tpl-mock__slot tpl-mock__slot--top">Top banner</div>
+          <div class="tpl-mock__feature-row">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="tpl-mock__split">
+            <div class="tpl-mock__split-body">
+              <div class="tpl-mock__line tpl-mock__line--lg"></div>
+              <div class="tpl-mock__line"></div>
+              <div class="tpl-mock__line"></div>
+            </div>
+            <div class="tpl-mock__slot tpl-mock__slot--tall">Sidebar</div>
+          </div>
+          <div class="tpl-mock__slot tpl-mock__slot--footer">Footer ad</div>
+          <div class="tpl-mock__sticky">Sticky bottom</div>
+        </div>
+        <ul class="tpl-card__slots">
+          <li>Hero takeover · Sticky header · Banner slots</li>
+          <li>Sidebar · Sticky bottom · Head/body scripts</li>
+        </ul>
+        <div class="tpl-card__actions">
+          <a class="btn-primary" href="/admin/new?template=landing">Create with Landing</a>
+          <a class="btn-ghost" href="/admin/templates/preview/landing" target="_blank" rel="noopener">Preview empty</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="/public/js/admin.js" defer></script>
+</body>
+</html>

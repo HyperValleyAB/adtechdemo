@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>All demos · Adtech Demo</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/public/img/favicon.svg">
+<link rel="stylesheet" href="/public/css/admin.css">
+</head>
+<body class="admin-shell">
+  <aside class="sidebar">
+    <a class="sidebar__brand" href="/admin">
+      <img class="sidebar__brand-logo" src="/public/img/logo.svg" alt="Leeads Adprofit">
+      <span class="sidebar__brand-sub">Adtech Demo</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a class="sidebar__link sidebar__link--active" href="/admin">All demos</a>
+      <a class="sidebar__link" href="/admin/new">Create demo</a>
+      <a class="sidebar__link" href="/admin/templates">Templates</a>
+      <a class="sidebar__link" href="/admin/settings">Settings</a>
+    </nav>
+    <form class="sidebar__logout" method="post" action="/logout">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <button type="submit" class="btn-ghost btn-block">Sign out</button>
+    </form>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <form class="topbar__search" method="get" action="/admin">
+        <input type="search" name="q" placeholder="Search demos by title, client or slug…" value="{{search}}">
+      </form>
+      <div class="topbar__actions">
+        <a class="btn-primary" href="/admin/new">+ Create demo</a>
+      </div>
+    </header>
+
+    <section class="page-head">
+      <div>
+        <h1>All demos</h1>
+        <p class="page-sub">{{demoCount}} demo(s)</p>
+      </div>
+    </section>
+
+    {{{emptyState}}}
+
+    <section class="card card--table">
+      <table class="demo-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Client</th>
+            <th>Status</th>
+            <th>Template</th>
+            <th>Updated</th>
+            <th class="cell-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{{demoRows}}}
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="/public/js/admin.js" defer></script>
+</body>
+</html>

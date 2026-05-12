@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{pageTitle}} · Adtech Demo</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/public/img/favicon.svg">
+<link rel="stylesheet" href="/public/css/admin.css">
+</head>
+<body class="admin-shell">
+  <aside class="sidebar">
+    <a class="sidebar__brand" href="/admin">
+      <img class="sidebar__brand-logo" src="/public/img/logo.svg" alt="Leeads Adprofit">
+      <span class="sidebar__brand-sub">Adtech Demo</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a class="sidebar__link" href="/admin">All demos</a>
+      <a class="sidebar__link sidebar__link--active" href="/admin/new">Create demo</a>
+      <a class="sidebar__link" href="/admin/templates">Templates</a>
+      <a class="sidebar__link" href="/admin/settings">Settings</a>
+    </nav>
+    <form class="sidebar__logout" method="post" action="/logout">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <button type="submit" class="btn-ghost btn-block">Sign out</button>
+    </form>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div class="topbar__crumbs">
+        <a href="/admin">All demos</a>
+        <span class="topbar__sep">/</span>
+        <span>{{pageTitle}}</span>
+      </div>
+      <div class="topbar__actions">
+        {{{previewUrlBlock}}}
+        {{{publicUrlBlock}}}
+      </div>
+    </header>
+
+    {{{saved}}}
+
+    <form method="post" action="{{formAction}}" class="editor" id="editor-form">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+      <section class="page-head">
+        <div>
+          <div class="page-eyebrow">Demo</div>
+          <h1>{{pageTitle}}</h1>
+          <p class="page-sub">Status {{{statusBadge}}} · Created {{createdAt}} · Updated {{updatedAt}}</p>
+        </div>
+        <div class="page-head__actions">
+          <button class="btn-primary" type="submit">Save</button>
+          {{{statusForm}}}
+          {{{duplicateForm}}}
+          {{{copyPreviewBtn}}}
+          {{{copyPublicBtn}}}
+        </div>
+      </section>
+
+      <div class="editor__grid">
+        <section class="card editor__general">
+          <h2 class="card__title">General</h2>
+          <div class="field">
+            <label for="title">Title</label>
+            <input id="title" type="text" name="title" value="{{title}}" required maxlength="200">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="slug">Slug</label>
+              <input id="slug" type="text" name="slug" value="{{slug}}" pattern="[a-z0-9\-]+" placeholder="auto-from-title">
+              <small class="field-hint">Used at /demo/{{slug}}. Lowercase, hyphenated.</small>
+            </div>
+            <div class="field">
+              <label for="clientName">Client name</label>
+              <input id="clientName" type="text" name="clientName" value="{{clientName}}" maxlength="200">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="template">Template</label>
+              <select id="template" name="template">
+                {{{templateOptions}}}
+              </select>
+            </div>
+            <div class="field">
+              <label for="status">Status</label>
+              <select id="status" name="status">
+                {{{statusOptions}}}
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="description">Internal notes</label>
+            <textarea id="description" name="description" rows="4" placeholder="Notes about the campaign, client expectations, scripts being tested…">{{description}}</textarea>
+          </div>
+          <div class="field">
+            <label for="customCss">Custom CSS</label>
+            <textarea id="customCss" name="customCss" rows="6" class="code" spellcheck="false">{{customCss}}</textarea>
+            <small class="field-hint">Injected into the demo page &lt;head&gt;. Useful for one-off creative tweaks.</small>
+          </div>
+        </section>
+
+        <section class="card editor__scripts">
+          <h2 class="card__title">Script placements</h2>
+          <p class="card__sub">Paste raw HTML / JavaScript. Snippets render exactly as saved on demo and preview pages. They never execute inside this editor.</p>
+
+          <div class="field">
+            <label for="headHtml">Head scripts</label>
+            <textarea id="headHtml" name="headHtml" rows="6" class="code" spellcheck="false" data-mobile-preview-target>{{headHtml}}</textarea>
+            <small class="field-hint">Goes inside &lt;head&gt;. Use for ad-server bootstraps, Prebid configs, GAM tags.</small>
+          </div>
+          <div class="field">
+            <label for="headerAdHtml">Header ad</label>
+            <textarea id="headerAdHtml" name="headerAdHtml" rows="6" class="code" spellcheck="false">{{headerAdHtml}}</textarea>
+          </div>
+          <div class="field">
+            <label for="topAdHtml">Top banner</label>
+            <textarea id="topAdHtml" name="topAdHtml" rows="6" class="code" spellcheck="false">{{topAdHtml}}</textarea>
+          </div>
+          <div class="field">
+            <label for="inArticleAdHtml">In-article ad</label>
+            <textarea id="inArticleAdHtml" name="inArticleAdHtml" rows="6" class="code" spellcheck="false">{{inArticleAdHtml}}</textarea>
+          </div>
+          <div class="field">
+            <label for="midArticleAdHtml">Mid-article ad</label>
+            <textarea id="midArticleAdHtml" name="midArticleAdHtml" rows="6" class="code" spellcheck="false">{{midArticleAdHtml}}</textarea>
+          </div>
+          <div class="field">
+            <label for="sidebarAdHtml">Sidebar ad</label>
+            <textarea id="sidebarAdHtml" name="sidebarAdHtml" rows="6" class="code" spellcheck="false">{{sidebarAdHtml}}</textarea>
+          </div>
+          <div class="field">
+            <label for="stickyAdHtml">Sticky bottom ad</label>
+            <textarea id="stickyAdHtml" name="stickyAdHtml" rows="6" class="code" spellcheck="false">{{stickyAdHtml}}</textarea>
+          </div>
+          <div class="field">
+            <label for="footerAdHtml">Footer ad</label>
+            <textarea id="footerAdHtml" name="footerAdHtml" rows="6" class="code" spellcheck="false">{{footerAdHtml}}</textarea>
+          </div>
+          <div class="field">
+            <label for="bodyEndHtml">Body-end scripts</label>
+            <textarea id="bodyEndHtml" name="bodyEndHtml" rows="6" class="code" spellcheck="false">{{bodyEndHtml}}</textarea>
+            <small class="field-hint">Injected before &lt;/body&gt;. Good for tracking pixels or deferred scripts.</small>
+          </div>
+        </section>
+      </div>
+
+      <footer class="editor__footer">
+        <div class="editor__footer-left">
+          {{{deleteForm}}}
+        </div>
+        <div class="editor__footer-right">
+          {{{previewUrlBlock}}}
+          <button class="btn-primary" type="submit">Save</button>
+        </div>
+      </footer>
+    </form>
+  </main>
+
+  <script src="/public/js/admin.js" defer></script>
+</body>
+</html>

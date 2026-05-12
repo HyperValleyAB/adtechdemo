@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{title}}</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="/public/css/templates.css">
+<style>{{{customCss}}}</style>
+{{{headHtml}}}
+</head>
+<body class="tpl tpl-landing" data-template="landing">
+  {{{previewBadge}}}
+
+  <header class="tpl-header tpl-header--landing">
+    <div class="tpl-header__inner">
+      <a class="tpl-logo tpl-logo--mark" href="#">
+        <span class="tpl-logo__mark tpl-logo__mark--landing"></span>
+        <span>{{clientName}}</span>
+      </a>
+      <nav class="tpl-nav tpl-nav--landing">
+        <a href="#features">Features</a>
+        <a href="#cta">Get started</a>
+      </nav>
+    </div>
+    {{{headerAd}}}
+  </header>
+
+  <main class="tpl-landing-wrap">
+    {{{articleBody}}}
+
+    <section class="tpl-landing-banner">
+      {{{topAd}}}
+    </section>
+
+    <section id="features" class="tpl-landing-features">
+      <h2>Why this demo exists</h2>
+      <div class="tpl-feature-grid">
+        <div class="tpl-feature">
+          <div class="tpl-feature__icon" aria-hidden="true">◇</div>
+          <h3>Realistic context</h3>
+          <p>Test creatives in a hero-driven environment that mirrors a real product launch page.</p>
+        </div>
+        <div class="tpl-feature">
+          <div class="tpl-feature__icon" aria-hidden="true">◈</div>
+          <h3>Multiple ad slots</h3>
+          <p>In-flow, banner, sidebar and sticky placements ready for any tag or wrapper.</p>
+        </div>
+        <div class="tpl-feature">
+          <div class="tpl-feature__icon" aria-hidden="true">○</div>
+          <h3>Mobile-first</h3>
+          <p>Layout scales cleanly so client walkthroughs feel polished on any device.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="tpl-landing-split">
+      <div class="tpl-landing-split__body">
+        <h2>Drop in any ad stack</h2>
+        <p>Whether you're previewing a Prebid wrapper, a Google Ad Manager tag, a custom adserver template or a vendor rich-media unit — paste the snippet into the corresponding placement field in the admin and it renders verbatim here.</p>
+        <p>Use the sidebar placement on the right (or below on mobile) to validate fixed inventory next to scrolling content.</p>
+      </div>
+      <aside class="tpl-landing-split__aside">
+        {{{sidebarAd}}}
+      </aside>
+    </section>
+
+    <section id="cta" class="tpl-landing-cta">
+      <h2>Ready to walk a client through it?</h2>
+      <p>Publish the demo and share the public URL.</p>
+      <a class="btn-primary" href="#">Get started</a>
+    </section>
+
+    <section class="tpl-landing-banner">
+      {{{footerAd}}}
+    </section>
+  </main>
+
+  <footer class="tpl-footer tpl-footer--landing">
+    <div class="tpl-footer__inner">
+      <p>Adtech Demo · Leeads Adprofit</p>
+      <nav class="tpl-footer__nav">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Contact</a>
+      </nav>
+    </div>
+  </footer>
+
+  {{{stickyAd}}}
+  {{{bodyEndHtml}}}
+  <script src="/public/js/templates.js" defer></script>
+</body>
+</html>

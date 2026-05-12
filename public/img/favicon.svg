@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#063220"/>
+  <g fill="#fcd0bc" font-family="Inter, -apple-system, 'Segoe UI', Arial, sans-serif" font-weight="800">
+    <text x="6" y="34" font-size="34" letter-spacing="-1">L</text>
+    <text x="30" y="58" font-size="40" letter-spacing="-1">A</text>
+  </g>
+</svg>

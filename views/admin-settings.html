@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settings · Adtech Demo</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/public/img/favicon.svg">
+<link rel="stylesheet" href="/public/css/admin.css">
+</head>
+<body class="admin-shell">
+  <aside class="sidebar">
+    <a class="sidebar__brand" href="/admin">
+      <img class="sidebar__brand-logo" src="/public/img/logo.svg" alt="Leeads Adprofit">
+      <span class="sidebar__brand-sub">Adtech Demo</span>
+    </a>
+    <nav class="sidebar__nav">
+      <a class="sidebar__link" href="/admin">All demos</a>
+      <a class="sidebar__link" href="/admin/new">Create demo</a>
+      <a class="sidebar__link" href="/admin/templates">Templates</a>
+      <a class="sidebar__link sidebar__link--active" href="/admin/settings">Settings</a>
+    </nav>
+    <form class="sidebar__logout" method="post" action="/logout">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <button type="submit" class="btn-ghost btn-block">Sign out</button>
+    </form>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div class="topbar__crumbs">
+        <a href="/admin">All demos</a>
+        <span class="topbar__sep">/</span>
+        <span>Settings</span>
+      </div>
+    </header>
+
+    <section class="page-head">
+      <div>
+        <div class="page-eyebrow">Account</div>
+        <h1>Settings</h1>
+        <p class="page-sub">Change the admin login password.</p>
+      </div>
+    </section>
+
+    {{{flash}}}
+
+    <section class="card settings-card settings-card--narrow">
+      <h2 class="card__title">Change password</h2>
+      <form method="post" action="/admin/settings" class="password-form" autocomplete="off">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
+        <div class="field">
+          <label for="currentPassword">Current password</label>
+          <input id="currentPassword" type="password" name="currentPassword" required autocomplete="current-password">
+        </div>
+        <div class="field">
+          <label for="newPassword">New password</label>
+          <input id="newPassword" type="password" name="newPassword" required minlength="8" autocomplete="new-password">
+          <small class="field-hint">Minimum 8 characters.</small>
+        </div>
+        <div class="field">
+          <label for="confirmPassword">Confirm new password</label>
+          <input id="confirmPassword" type="password" name="confirmPassword" required minlength="8" autocomplete="new-password">
+        </div>
+
+        <div class="password-form__footer">
+          <button type="submit" class="btn-primary">Update password</button>
+          <span class="password-form__note">{{{sourceNote}}}</span>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="/public/js/admin.js" defer></script>
+</body>
+</html>

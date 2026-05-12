@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{title}}</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="/public/css/templates.css">
+<style>{{{customCss}}}</style>
+{{{headHtml}}}
+</head>
+<body class="tpl tpl-news" data-template="news">
+  {{{previewBadge}}}
+
+  <header class="tpl-header">
+    <div class="tpl-header__inner">
+      <a class="tpl-logo" href="#">
+        <span class="tpl-logo__mark"></span>
+        <span class="tpl-logo__text">The Nordic Daily</span>
+      </a>
+      <nav class="tpl-nav">
+        <a href="#">News</a>
+        <a href="#">Business</a>
+        <a href="#">Tech</a>
+        <a href="#">Culture</a>
+        <a href="#">Opinion</a>
+      </nav>
+      <div class="tpl-header__right">
+        <span class="tpl-pill">Demo</span>
+      </div>
+    </div>
+    {{{headerAd}}}
+  </header>
+
+  <div class="tpl-banner">{{{topAd}}}</div>
+
+  <main class="tpl-article-wrap">
+    <article class="tpl-article">
+      <span class="tpl-eyebrow">Adtech demo</span>
+      <h1 class="tpl-headline">{{title}}</h1>
+      <p class="tpl-deck">Prepared for {{clientName}} · Demo environment for previewing ad creative in a publisher-style article context.</p>
+
+      <div class="tpl-byline">
+        <div class="tpl-byline__avatar" aria-hidden="true"></div>
+        <div>
+          <div class="tpl-byline__name">Adops Team</div>
+          <div class="tpl-byline__meta">Last updated {{updatedAtHuman}}</div>
+        </div>
+        <div class="tpl-share">
+          <span>Share</span>
+          <span class="tpl-share__dot"></span>
+        </div>
+      </div>
+
+      <figure class="tpl-hero">
+        <div class="tpl-hero__image" role="img" aria-label="Article hero image placeholder"></div>
+        <figcaption>Hero image placeholder — replace with the campaign visual when sharing with a client.</figcaption>
+      </figure>
+
+      <div class="tpl-body">
+        {{{articleBody}}}
+      </div>
+    </article>
+
+    <aside class="tpl-sidebar">
+      <div class="tpl-sidebar__sticky">
+        {{{sidebarAd}}}
+        <div class="tpl-card">
+          <h3>Most read</h3>
+          <ol>
+            <li><a href="#">Nordic ad market sees double-digit programmatic growth</a></li>
+            <li><a href="#">Inside the new publisher header bidding stacks</a></li>
+            <li><a href="#">Why first-party data is dominating Q4 RFPs</a></li>
+            <li><a href="#">Connected TV breaks through to local advertisers</a></li>
+          </ol>
+        </div>
+        <div class="tpl-card">
+          <h3>Newsletter</h3>
+          <p>Get the weekly Nordic adtech briefing — handpicked stories every Wednesday.</p>
+          <form class="tpl-newsletter" onsubmit="event.preventDefault()">
+            <input type="email" placeholder="you@brand.com" required>
+            <button type="submit" class="tpl-btn">Subscribe</button>
+          </form>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="tpl-footer">
+    <div class="tpl-footer__inner">
+      <div>
+        <strong>The Nordic Daily</strong>
+        <p>Demo publisher environment · Adtech Demo by Leeads Adprofit</p>
+      </div>
+      <nav class="tpl-footer__nav">
+        <a href="#">About</a>
+        <a href="#">Advertise</a>
+        <a href="#">Privacy</a>
+        <a href="#">Contact</a>
+      </nav>
+    </div>
+    {{{footerAd}}}
+  </footer>
+
+  {{{stickyAd}}}
+  {{{bodyEndHtml}}}
+  <script src="/public/js/templates.js" defer></script>
+</body>
+</html>

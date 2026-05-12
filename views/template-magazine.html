@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{title}}</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="/public/css/templates.css">
+<style>{{{customCss}}}</style>
+{{{headHtml}}}
+</head>
+<body class="tpl tpl-magazine" data-template="magazine">
+  {{{previewBadge}}}
+
+  <header class="tpl-header tpl-header--magazine">
+    <div class="tpl-header__inner">
+      <a class="tpl-logo tpl-logo--serif" href="#">Nordic Mag</a>
+      <nav class="tpl-nav tpl-nav--magazine">
+        <a href="#">Lifestyle</a>
+        <a href="#">Design</a>
+        <a href="#">Food</a>
+        <a href="#">Travel</a>
+        <a href="#">Interviews</a>
+      </nav>
+      <span class="tpl-pill tpl-pill--soft">Demo issue</span>
+    </div>
+    {{{headerAd}}}
+  </header>
+
+  <section class="tpl-magazine-hero">
+    <div class="tpl-magazine-hero__image" aria-hidden="true"></div>
+    <div class="tpl-magazine-hero__copy">
+      <span class="tpl-eyebrow tpl-eyebrow--magazine">Sponsored feature for {{clientName}}</span>
+      <h1>{{title}}</h1>
+      <p class="tpl-deck tpl-deck--magazine">An editorial-style demo page for testing native and sponsored content placements alongside long-form articles.</p>
+      <div class="tpl-byline tpl-byline--magazine">
+        <div class="tpl-byline__avatar" aria-hidden="true"></div>
+        <div>
+          <div class="tpl-byline__name">Editorial Team</div>
+          <div class="tpl-byline__meta">Updated {{updatedAtHuman}} · 6 min read</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="tpl-banner tpl-banner--soft">{{{topAd}}}</div>
+
+  <main class="tpl-article-wrap tpl-article-wrap--magazine">
+    <article class="tpl-article tpl-article--magazine">
+      <div class="tpl-body tpl-body--magazine">
+        {{{articleBody}}}
+
+        <figure class="tpl-figure">
+          <div class="tpl-figure__image" aria-hidden="true"></div>
+          <figcaption>Editorial image placeholder — swap in lifestyle photography for the live demo.</figcaption>
+        </figure>
+
+        <p>Native placements work especially well in editorial contexts because the surrounding tone is calm. Use the in-article and mid-article slots above to validate native ad units, content recommendations and sponsored modules without disrupting the reading flow.</p>
+      </div>
+    </article>
+
+    <aside class="tpl-sidebar tpl-sidebar--magazine">
+      <div class="tpl-sidebar__sticky">
+        {{{sidebarAd}}}
+        <div class="tpl-card tpl-card--soft">
+          <h3>Editor's picks</h3>
+          <ul class="tpl-pick-list">
+            <li><a href="#"><span>Slow living rituals from a Copenhagen designer</span></a></li>
+            <li><a href="#"><span>Inside a renovated 1930s archipelago cabin</span></a></li>
+            <li><a href="#"><span>The new wave of Nordic ceramicists</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="tpl-footer tpl-footer--magazine">
+    <div class="tpl-footer__inner">
+      <div>
+        <strong class="tpl-logo--serif">Nordic Mag</strong>
+        <p>Demo issue · Adtech Demo by Leeads Adprofit</p>
+      </div>
+      <nav class="tpl-footer__nav">
+        <a href="#">Subscribe</a>
+        <a href="#">Stockists</a>
+        <a href="#">Advertise</a>
+        <a href="#">Imprint</a>
+      </nav>
+    </div>
+    {{{footerAd}}}
+  </footer>
+
+  {{{stickyAd}}}
+  {{{bodyEndHtml}}}
+  <script src="/public/js/templates.js" defer></script>
+</body>
+</html>

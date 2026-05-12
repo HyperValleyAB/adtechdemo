@@ -163,35 +163,53 @@ code {
 /* ============================================================== */
 /* Password input + reveal toggle                                  */
 /* ============================================================== */
-.password-input { position: relative; }
-.password-input input { padding-right: 46px !important; margin-bottom: 0 !important; }
-.password-toggle {
-  position: absolute;
-  top: 50%;
-  right: 6px;
-  transform: translateY(-50%);
+div.password-input {
+  position: relative !important;
+  display: block;
+  width: 100%;
+}
+div.password-input > input {
+  padding-right: 48px !important;
+  margin-bottom: 0 !important;
+  width: 100%;
+}
+button.password-toggle {
+  position: absolute !important;
+  top: 50% !important;
+  right: 6px !important;
+  left: auto !important;
+  transform: translateY(-50%) !important;
   background: transparent;
   border: 0;
   padding: 8px;
+  margin: 0;
   cursor: pointer;
   color: var(--text-muted);
   border-radius: 8px;
-  display: inline-flex; align-items: center; justify-content: center;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
   transition: background 120ms ease, color 120ms ease;
+  z-index: 2;
 }
-.password-toggle:hover { color: var(--brand-green); background: rgba(3, 43, 22, 0.05); }
-.password-toggle:focus-visible {
+button.password-toggle:hover { color: var(--brand-green); background: rgba(3, 43, 22, 0.06); }
+button.password-toggle:focus-visible {
   outline: none;
   color: var(--brand-green);
-  box-shadow: 0 0 0 3px rgba(3, 43, 22, 0.15);
+  box-shadow: 0 0 0 3px rgba(3, 43, 22, 0.18);
 }
-.password-toggle svg { width: 18px; height: 18px; display: block; }
-.password-toggle .icon-hide { display: none; }
-.password-toggle[aria-pressed="true"] .icon-show { display: none; }
-.password-toggle[aria-pressed="true"] .icon-hide { display: block; }
+button.password-toggle > svg {
+  width: 18px !important;
+  height: 18px !important;
+  display: block;
+}
+button.password-toggle > svg.icon-hide { display: none !important; }
+button.password-toggle[aria-pressed="true"] > svg.icon-show { display: none !important; }
+button.password-toggle[aria-pressed="true"] > svg.icon-hide { display: block !important; }
 
 /* Login-card-specific: keep the toggle off the bottom margin */
-.login-card .password-input { margin-bottom: 18px; }
+.login-card div.password-input { margin-bottom: 18px; }
 
 /* ============================================================== */
 /* Admin shell                                                     */

@@ -356,24 +356,26 @@ function renderEditPage(req, res, demo, { mode, saved = false } = {}) {
     copyPreviewBtn: previewUrl
       ? `<button type="button" class="btn-ghost" data-copy="${escapeHtml(absoluteUrl(req, previewUrl))}">Copy preview URL</button>`
       : '',
-    deleteForm: isNew
+    // The buttons sit inside #editor-form but submit separate forms via the
+    // `form` attribute. The forms themselves must stay outside #editor-form:
+    // nested <form> tags are invalid HTML, and the browser would merge their
+    // hidden fields into the editor (duplicate _csrf → 403 on every save).
+    deleteButton: isNew ? '' : '<button type="submit" form="delete-form" class="btn-danger">Delete demo</button>',
+    duplicateButton: isNew ? '' : '<button type="submit" form="duplicate-form" class="btn-ghost">Duplicate</button>',
+    statusButton: isNew
       ? ''
-      : `<form method="post" action="/admin/delete/${encodeURIComponent(demo.id)}" data-confirm="Delete this demo? This cannot be undone.">
+      : `<button type="submit" form="status-form" class="btn-ghost">${demo.status === 'published' ? 'Unpublish' : 'Publish'}</button>`,
+    actionForms: isNew
+      ? ''
+      : `<form id="delete-form" method="post" action="/admin/delete/${encodeURIComponent(demo.id)}" data-confirm="Delete this demo? This cannot be undone.">
            <input type="hidden" name="_csrf" value="${csrfToken}">
-           <button type="submit" class="btn-danger">Delete demo</button>
-         </form>`,
-    duplicateForm: isNew
-      ? ''
-      : `<form method="post" action="/admin/duplicate/${encodeURIComponent(demo.id)}">
+         </form>
+         <form id="duplicate-form" method="post" action="/admin/duplicate/${encodeURIComponent(demo.id)}">
            <input type="hidden" name="_csrf" value="${csrfToken}">
-           <button type="submit" class="btn-ghost">Duplicate</button>
-         </form>`,
-    statusForm: isNew
-      ? ''
-      : `<form method="post" action="/admin/status/${encodeURIComponent(demo.id)}">
+         </form>
+         <form id="status-form" method="post" action="/admin/status/${encodeURIComponent(demo.id)}">
            <input type="hidden" name="_csrf" value="${csrfToken}">
            <input type="hidden" name="back" value="/admin/edit/${encodeURIComponent(demo.id)}">
-           <button type="submit" class="btn-ghost">${demo.status === 'published' ? 'Unpublish' : 'Publish'}</button>
          </form>`,
     customCss: demo.customCss,
     headHtml: demo.headHtml,

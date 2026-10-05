@@ -436,7 +436,6 @@ button.password-toggle[aria-pressed="true"] > svg.icon-hide { display: block !im
 }
 .page-sub { color: var(--text-muted); margin: 6px 0 0; }
 .page-head__actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.page-head__actions form { margin: 0; }
 
 /* ============================================================== */
 /* Cards / table                                                   */

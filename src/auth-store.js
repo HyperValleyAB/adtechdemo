@@ -6,6 +6,7 @@
 //   setPassword(plain)       -> Promise<void>
 //   hasStoredPassword()      -> Promise<boolean>
 //   passwordSource()         -> Promise<'stored'|'env'|'none'>
+//   credentialVersion()      -> Promise<string> (changes when the password does)
 
 const useSupabase = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 module.exports = useSupabase ? require('./auth-store-supabase') : require('./auth-store-json');

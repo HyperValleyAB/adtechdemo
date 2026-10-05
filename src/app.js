@@ -97,7 +97,7 @@ function createApp() {
       renderView('admin-list.html', {
         demoRows: renderDemoRows(demos, csrfToken),
         demoCount: String(demos.length),
-        search: escapeHtml(search),
+        search,
         csrfToken,
         emptyState: demos.length === 0 ? renderEmptyState(search) : '',
       }),
@@ -153,14 +153,14 @@ function createApp() {
       );
     }
 
-    const result = await auth.changePassword(current, next);
+    const result = await auth.changePassword(req, res, current, next);
     if (!result.ok) {
       return res.status(400).type('html').send(
         await renderSettingsPage(req, res, { flash: `<div class="flash flash--danger">${escapeHtml(result.error)}</div>` }),
       );
     }
     res.type('html').send(
-      await renderSettingsPage(req, res, { flash: '<div class="flash flash--success">Password updated. Next sign-in will use the new password.</div>' }),
+      await renderSettingsPage(req, res, { flash: '<div class="flash flash--success">Password updated. All other sessions have been signed out.</div>' }),
     );
   }));
 
@@ -176,7 +176,11 @@ function createApp() {
   }));
 
   app.post('/admin/edit/:id', auth.requireAuth, auth.verifyCsrf, asyncHandler(async (req, res) => {
-    const updated = await storage.updateDemo(req.params.id, buildDemoFromForm(req.body));
+    const input = buildDemoFromForm(req.body);
+    // The editor's Publish / Unpublish button submits the whole form, so
+    // unsaved edits are saved together with the status change.
+    if (storage.STATUSES.includes(req.body.setStatus)) input.status = req.body.setStatus;
+    const updated = await storage.updateDemo(req.params.id, input);
     if (!updated) return res.status(404).type('html').send(renderNotFound('Demo not found.'));
     res.redirect(`/admin/edit/${updated.id}?saved=1`);
   }));
@@ -195,7 +199,10 @@ function createApp() {
   app.post('/admin/status/:id', auth.requireAuth, auth.verifyCsrf, asyncHandler(async (req, res) => {
     const demo = await storage.getById(req.params.id);
     if (!demo) return res.status(404).type('html').send(renderNotFound('Demo not found.'));
-    const next = demo.status === 'published' ? 'draft' : 'published';
+    // Forms send the target status explicitly, so a double-click or a stale tab
+    // can't flip it back. Pages rendered before that change still toggle.
+    const requested = req.body && req.body.status;
+    const next = storage.STATUSES.includes(requested) ? requested : (demo.status === 'published' ? 'draft' : 'published');
     await storage.setStatus(req.params.id, next);
     const back = safeLocalPath(req.body && req.body.back, '/admin');
     res.redirect(back);
@@ -225,9 +232,10 @@ function createApp() {
 
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
-    console.error('[adtech-demo] unhandled error:', err);
+    const status = err.status || err.statusCode || 500;
+    if (status >= 500) console.error('[adtech-demo] unhandled error:', err);
     if (res.headersSent) return next(err);
-    res.status(500).type('html').send(renderNotFound('Something went wrong.'));
+    res.status(status).type('html').send(renderErrorPage(status));
   });
 
   return app;
@@ -283,6 +291,7 @@ function renderDemoRows(demos, csrfToken) {
             ${publicLink}
             <form class="row-form" method="post" action="/admin/status/${encodeURIComponent(d.id)}">
               <input type="hidden" name="_csrf" value="${csrfToken}">
+              <input type="hidden" name="status" value="${d.status === 'published' ? 'draft' : 'published'}">
               <input type="hidden" name="back" value="/admin">
               <button type="submit" class="row-action row-action--button">${statusToggleLabel}</button>
             </form>
@@ -330,20 +339,22 @@ function renderEditPage(req, res, demo, { mode, saved = false } = {}) {
     : '<span class="badge badge--muted">draft</span>';
 
   return renderView('admin-edit.html', {
-    pageTitle: isNew ? 'Create demo' : `Edit · ${escapeHtml(demo.title || 'Untitled demo')}`,
+    pageTitle: isNew ? 'Create demo' : `Edit · ${demo.title || 'Untitled demo'}`,
     formAction: action,
     csrfToken,
     isNew: isNew ? '1' : '',
     saved: saved ? '<div class="flash flash--success">Saved.</div>' : '',
     statusBadge,
-    title: escapeHtml(demo.title),
-    slug: escapeHtml(demo.slug),
-    clientName: escapeHtml(demo.clientName),
-    description: escapeHtml(demo.description),
+    // Plain values: {{ }} in the view escapes them. Escaping here as well
+    // double-escaped them, so every save corrupted names like "H&M".
+    title: demo.title,
+    slug: demo.slug,
+    clientName: demo.clientName,
+    description: demo.description,
     templateOptions: renderTemplateOptions(demo.template),
     statusOptions: renderStatusOptions(demo.status),
-    createdAt: escapeHtml(formatDate(demo.createdAt) || '—'),
-    updatedAt: escapeHtml(formatDate(demo.updatedAt) || '—'),
+    createdAt: formatDate(demo.createdAt) || '—',
+    updatedAt: formatDate(demo.updatedAt) || '—',
     previewUrlBlock: previewUrl
       ? `<a class="btn-ghost" href="${previewUrl}" target="_blank" rel="noopener">Preview</a>`
       : '<span class="btn-ghost btn-ghost--disabled" title="Save the demo to preview">Preview</span>',
@@ -356,15 +367,18 @@ function renderEditPage(req, res, demo, { mode, saved = false } = {}) {
     copyPreviewBtn: previewUrl
       ? `<button type="button" class="btn-ghost" data-copy="${escapeHtml(absoluteUrl(req, previewUrl))}">Copy preview URL</button>`
       : '',
-    // The buttons sit inside #editor-form but submit separate forms via the
-    // `form` attribute. The forms themselves must stay outside #editor-form:
+    // Publish / Unpublish submits the editor itself (saving pending edits).
+    // Delete and Duplicate sit inside #editor-form but submit separate forms
+    // via the `form` attribute. Those forms must stay outside #editor-form:
     // nested <form> tags are invalid HTML, and the browser would merge their
     // hidden fields into the editor (duplicate _csrf → 403 on every save).
-    deleteButton: isNew ? '' : '<button type="submit" form="delete-form" class="btn-danger">Delete demo</button>',
-    duplicateButton: isNew ? '' : '<button type="submit" form="duplicate-form" class="btn-ghost">Duplicate</button>',
     statusButton: isNew
       ? ''
-      : `<button type="submit" form="status-form" class="btn-ghost">${demo.status === 'published' ? 'Unpublish' : 'Publish'}</button>`,
+      : demo.status === 'published'
+        ? '<button type="submit" name="setStatus" value="draft" class="btn-ghost">Unpublish</button>'
+        : '<button type="submit" name="setStatus" value="published" class="btn-ghost">Save &amp; publish</button>',
+    deleteButton: isNew ? '' : '<button type="submit" form="delete-form" class="btn-danger">Delete demo</button>',
+    duplicateButton: isNew ? '' : '<button type="submit" form="duplicate-form" class="btn-ghost">Duplicate</button>',
     actionForms: isNew
       ? ''
       : `<form id="delete-form" method="post" action="/admin/delete/${encodeURIComponent(demo.id)}" data-confirm="Delete this demo? This cannot be undone.">
@@ -372,10 +386,6 @@ function renderEditPage(req, res, demo, { mode, saved = false } = {}) {
          </form>
          <form id="duplicate-form" method="post" action="/admin/duplicate/${encodeURIComponent(demo.id)}">
            <input type="hidden" name="_csrf" value="${csrfToken}">
-         </form>
-         <form id="status-form" method="post" action="/admin/status/${encodeURIComponent(demo.id)}">
-           <input type="hidden" name="_csrf" value="${csrfToken}">
-           <input type="hidden" name="back" value="/admin/edit/${encodeURIComponent(demo.id)}">
          </form>`,
     customCss: demo.customCss,
     headHtml: demo.headHtml,
@@ -478,6 +488,38 @@ function renderNotFound(message) {
     <h1>${escapeHtml(message)}</h1>
     <p>Either the demo isn't published yet, has been removed, or the URL is wrong.</p>
     <a class="btn-primary" href="/">Back to start</a>
+  </main>
+</body>
+</html>`;
+}
+
+const ERROR_MESSAGES = {
+  400: ['That request could not be read', 'Nothing was saved. Go back and try again.'],
+  401: ["You've been signed out", 'Sessions last 12 hours, so nothing was saved. Go back to copy your changes, then sign in again.'],
+  403: ['This form has expired', 'Nothing was saved. Go back to copy your changes, then reload the page and save again.'],
+  413: ['Too much to save', 'The pasted snippets add up to more than 2 MB, so nothing was saved. Go back to get your changes, and load large scripts from a URL instead of pasting them inline.'],
+  500: ['Something went wrong', 'Nothing was saved. Go back and try again. If it keeps happening, check the server logs.'],
+};
+
+function renderErrorPage(status) {
+  const [title, message] = ERROR_MESSAGES[status] || ERROR_MESSAGES[status >= 500 ? 500 : 400];
+  const signIn = status === 401 ? '<a class="btn-ghost" href="/login">Sign in</a>' : '';
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>${escapeHtml(title)} · Adtech Demo</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/public/img/favicon.svg">
+<link rel="stylesheet" href="/public/css/admin.css">
+</head>
+<body class="public-shell">
+  <main class="public-card">
+    <span class="public-eyebrow">Error ${status}</span>
+    <h1>${escapeHtml(title)}</h1>
+    <p>${escapeHtml(message)}</p>
+    <button type="button" class="btn-primary" onclick="history.back()">Go back</button>
+    ${signIn}
   </main>
 </body>
 </html>`;

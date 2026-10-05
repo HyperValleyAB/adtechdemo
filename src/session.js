@@ -2,7 +2,9 @@
 // in-memory session stores would be lost between cold starts.
 //
 // Two cookies:
-//   adtech.auth — base64(JSON payload).base64(HMAC-SHA256). Holds {isAdmin,loginAt}.
+//   adtech.auth — base64(JSON payload).base64(HMAC-SHA256). Holds
+//                 {isAdmin, loginAt, cred}; `cred` is a fingerprint of the
+//                 password at sign-in, so changing it ends other sessions.
 //   adtech.csrf — random opaque token, double-submitted with every form POST.
 
 const crypto = require('crypto');
@@ -67,13 +69,20 @@ function cookieOptions(maxAgeMs) {
 function middleware(req, res, next) {
   const token = req.cookies && req.cookies[AUTH_COOKIE];
   const data = token ? verify(token) : null;
-  req.session = data || {};
+  // The cookie's maxAge is only a hint to the browser; enforce expiry here too.
+  const age = data ? Date.now() - Date.parse(data.loginAt) : NaN;
+  req.session = data && age >= 0 && age < AUTH_MAX_AGE_MS ? data : {};
   next();
 }
 
-function signIn(res) {
-  const payload = { isAdmin: true, loginAt: new Date().toISOString() };
+function signIn(res, cred) {
+  const payload = { isAdmin: true, loginAt: new Date().toISOString(), cred };
   res.cookie(AUTH_COOKIE, sign(payload), cookieOptions(AUTH_MAX_AGE_MS));
+}
+
+// Keyed so the cookie never carries anything derived from the bare password.
+function fingerprint(material) {
+  return crypto.createHmac('sha256', secret()).update(String(material)).digest('base64url').slice(0, 22);
 }
 
 function signOut(res) {
@@ -85,20 +94,27 @@ function ensureCsrfToken(req, res) {
   let token = req.cookies && req.cookies[CSRF_COOKIE];
   if (!token || typeof token !== 'string' || token.length < 32) {
     token = crypto.randomBytes(24).toString('hex');
-    res.cookie(CSRF_COOKIE, token, cookieOptions(CSRF_MAX_AGE_MS));
   }
+  // Re-set on every page render so the cookie can't expire under an open form.
+  res.cookie(CSRF_COOKIE, token, cookieOptions(CSRF_MAX_AGE_MS));
   return token;
+}
+
+function csrfError() {
+  const err = new Error('Invalid CSRF token.');
+  err.status = 403;
+  return err;
 }
 
 function verifyCsrf(req, res, next) {
   const cookie = req.cookies && req.cookies[CSRF_COOKIE];
   const provided = (req.body && req.body._csrf) || req.get('x-csrf-token');
-  if (!cookie || !provided) return res.status(403).send('Invalid CSRF token. Refresh and try again.');
+  if (!cookie || !provided) return next(csrfError());
   const a = Buffer.from(String(cookie));
   const b = Buffer.from(String(provided));
-  if (a.length !== b.length) return res.status(403).send('Invalid CSRF token. Refresh and try again.');
-  if (!crypto.timingSafeEqual(a, b)) return res.status(403).send('Invalid CSRF token. Refresh and try again.');
+  if (a.length !== b.length) return next(csrfError());
+  if (!crypto.timingSafeEqual(a, b)) return next(csrfError());
   return next();
 }
 
-module.exports = { middleware, signIn, signOut, ensureCsrfToken, verifyCsrf, AUTH_COOKIE, CSRF_COOKIE };
+module.exports = { middleware, signIn, signOut, fingerprint, ensureCsrfToken, verifyCsrf, AUTH_COOKIE, CSRF_COOKIE };

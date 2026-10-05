@@ -13,14 +13,31 @@
     btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
   });
 
-  // Confirm-before-submit for any form with data-confirm.
+  // Unsaved-changes tracking for the demo editor.
+  const editorForm = document.getElementById('editor-form');
+  let dirty = false;
+  if (editorForm) {
+    editorForm.addEventListener('input', () => { dirty = true; });
+    window.addEventListener('beforeunload', (e) => {
+      if (!dirty) return;
+      e.preventDefault();
+      e.returnValue = '';
+    });
+  }
+
+  // Confirm-before-submit for any form with data-confirm, and for any other
+  // form (Duplicate, Sign out) that would throw away unsaved editor changes.
   document.addEventListener('submit', function (e) {
     const form = e.target;
-    if (form && form.dataset && form.dataset.confirm) {
-      if (!window.confirm(form.dataset.confirm)) {
-        e.preventDefault();
-      }
+    if (form === editorForm) { dirty = false; return; }
+    let message = form && form.dataset && form.dataset.confirm;
+    if (!message && dirty) message = 'You have unsaved changes. They will be lost if you continue.';
+    if (message && !window.confirm(message)) {
+      e.preventDefault();
+      return;
     }
+    // Already confirmed; don't ask again on the way out.
+    dirty = false;
   });
 
   // Copy-to-clipboard buttons (data-copy="value").
@@ -61,19 +78,6 @@
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '')
         .slice(0, 80);
-    });
-  }
-
-  // Warn before navigating away with unsaved changes.
-  const editorForm = document.getElementById('editor-form');
-  if (editorForm) {
-    let dirty = false;
-    editorForm.addEventListener('input', () => { dirty = true; });
-    editorForm.addEventListener('submit', () => { dirty = false; });
-    window.addEventListener('beforeunload', (e) => {
-      if (!dirty) return;
-      e.preventDefault();
-      e.returnValue = '';
     });
   }
 })();

@@ -46,10 +46,9 @@ function buildArticleBody(demo) {
       renderAdSlot(demo.midArticleAdHtml, 'Mid-article', { stripWhenEmpty: true, noWrapper: true })
     );
   }
-  // Split intrinsic article copy around the mid-article ad slot.
-  const intro = demo.template === 'landing'
-    ? landingIntro(demo)
-    : articleIntro(demo);
+  // Split intrinsic article copy around the mid-article ad slot. The landing
+  // hero is its own token so the top banner can sit directly under it.
+  const intro = demo.template === 'landing' ? '' : articleIntro(demo);
   const beforeMid = articleBodyTop(demo);
   const afterMid = articleBodyBottom(demo);
   return `${intro}${renderAdSlot(demo.inArticleAdHtml, 'In-article')}${beforeMid}${renderAdSlot(demo.midArticleAdHtml, 'Mid-article')}${afterMid}`;
@@ -118,7 +117,7 @@ function renderStickyAd(html, { stripWhenEmpty = false, noWrapper = false } = {}
     return `<div class="sticky-ad sticky-ad--empty" data-slot="Sticky"><span class="ad-slot__hint">Ad placement · Sticky bottom</span><button type="button" class="sticky-ad__close" aria-label="Close">×</button></div>`;
   }
   if (noWrapper) return html;
-  return `<div class="sticky-ad" data-slot="Sticky">${html}</div>`;
+  return `<div class="sticky-ad" data-slot="Sticky">${html}<button type="button" class="sticky-ad__close" aria-label="Close">×</button></div>`;
 }
 
 function renderDemoPage(demo, { isPreview = false } = {}) {
@@ -141,6 +140,7 @@ function renderDemoPage(demo, { isPreview = false } = {}) {
     sidebarAd: renderAdSlot(demo.sidebarAdHtml, 'Sidebar', slotOpts),
     stickyAd: renderStickyAd(demo.stickyAdHtml, slotOpts),
     footerAd: renderAdSlot(demo.footerAdHtml, 'Footer', slotOpts),
+    hero: demo.template === 'landing' ? landingIntro(demo) : '',
     articleBody: buildArticleBody(demo),
     previewBadge: isPreview ? '<div class="preview-badge">Preview · not published</div>' : '',
   };

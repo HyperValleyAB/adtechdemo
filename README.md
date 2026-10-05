@@ -127,6 +127,8 @@ realistic context. The implications:
 - Login is rate-limited and CSRF tokens are required on every mutating admin
   POST.
 - Session cookies are `httpOnly`, `sameSite=lax`, and `secure` in production.
+- Sessions expire after 12 hours (checked server-side, not just by the cookie),
+  and changing the password in **Settings** signs out every other session.
 - Never expose the admin URL on an unauthenticated public host. Always
   password-protect it via `ADMIN_PASSWORD` (and, if possible, also gate the
   `/admin` path at the load balancer / reverse proxy with an IP allow-list).

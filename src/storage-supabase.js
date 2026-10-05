@@ -128,7 +128,9 @@ async function listDemos({ search } = {}) {
     const q = search.trim();
     // Postgres ilike — escape SQL wildcards in the user input.
     const safe = q.replace(/[\\%_]/g, (m) => `\\${m}`);
-    const term = `%${safe}%`;
+    // Double-quote the value so commas and parentheses don't break PostgREST's
+    // or=(...) syntax; inside quotes, `"` and `\` need a backslash.
+    const term = `"%${safe.replace(/["\\]/g, (m) => `\\${m}`)}%"`;
     query = query.or(`title.ilike.${term},slug.ilike.${term},client_name.ilike.${term},description.ilike.${term}`);
   }
   const { data, error } = await query;
@@ -136,7 +138,12 @@ async function listDemos({ search } = {}) {
   return (data || []).map(toDemo);
 }
 
+// `id` is a uuid column: anything else makes Postgres error instead of
+// matching nothing.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 async function getById(id) {
+  if (!UUID_RE.test(String(id))) return null;
   const supabase = getClient();
   const { data, error } = await supabase.from('demos').select(SELECT_COLS).eq('id', id).maybeSingle();
   if (error && error.code !== 'PGRST116') throw error;
@@ -174,6 +181,7 @@ async function updateDemo(id, input) {
 }
 
 async function deleteDemo(id) {
+  if (!UUID_RE.test(String(id))) return false;
   const supabase = getClient();
   const { error, count } = await supabase.from('demos').delete({ count: 'exact' }).eq('id', id);
   if (error) throw error;

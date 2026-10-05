@@ -83,4 +83,11 @@ async function passwordSource() {
   return 'none';
 }
 
-module.exports = { verifyPassword, setPassword, hasStoredPassword, passwordSource };
+// Opaque value that changes whenever the effective password changes.
+async function credentialVersion() {
+  const store = readStore();
+  if (store && store.passwordHash) return store.passwordHash;
+  return process.env.ADMIN_PASSWORD ? `env:${process.env.ADMIN_PASSWORD}` : 'none';
+}
+
+module.exports = { verifyPassword, setPassword, hasStoredPassword, passwordSource, credentialVersion };
